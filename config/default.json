@@ -1,3 +1,4 @@
 {
-    "mongoURI": "mongodb://localhost:27017/"
+  "mongoURI": "mongodb://localhost:27017/",
+  "mongoURI2": "mongodb+srv://clee080:passworD@cluster0.x62uono.mongodb.net/?retryWrites=true&w=majority"
 }
