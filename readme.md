@@ -1,6 +1,6 @@
 <h1>MSA Backend</h1>
 
-[CI Status](https://github.com/msa-sg/msa-web-backend/actions/workflows/ci.yml/badge.svg)
+https://github.com/msa-sg/msa-web-backend/actions/workflows/ci.yml/badge.svg
 
 - [Developers](#developers)
   - [Development](#development)
