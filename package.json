@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node dist/index.js",
-    "dev": "nodemon",
+    "start": "NODE_PATH=./dist node dist/index.js",
+    "dev": "nodemon src/index.ts -L",
     "build": "tsc -p .",
     "test": "echo \"No test\" && exit 0"
   },
