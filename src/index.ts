@@ -38,6 +38,7 @@ server.listen(8080, () => {
 // DB connection(new)
 // const dbURI = config.get("mongoURI");
 const dbURI = config.get("mongoURI2");
+mongoose.set("strictQuery", false);
 mongoose.connect(dbURI, {
   // useNewUrlParser: true,
   // useUnifiedTopology: true,

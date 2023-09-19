@@ -50,12 +50,12 @@ export const login = async (req: express.Request, res: express.Response) => {
 
 export const register = async (req: express.Request, res: express.Response) => {
   try {
-    const { email, password, username } = req.body;
+    const { email, password, username, isAdmin } = req.body;
 
     if (!email || !password || !username) {
       return res.sendStatus(400);
     }
-    console.log("registering");
+    console.log("registering ...");
 
     const existingUser = await getUserByEmail(email);
 
@@ -67,6 +67,7 @@ export const register = async (req: express.Request, res: express.Response) => {
     const user = await createUser({
       email,
       username,
+      isAdmin,
       authentication: {
         salt,
         password: authentication(salt, password),
