@@ -1,0 +1,17 @@
+FROM node:18 as base
+
+WORKDIR /home/node/app
+
+COPY package*.json ./
+
+RUN npm install -g typescript
+
+RUN npm i
+
+COPY . .
+
+FROM base as production
+
+ENV NODE_PATH=./dist
+
+RUN npm run build
