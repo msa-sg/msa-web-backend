@@ -4,6 +4,7 @@ import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
 import compression from "compression";
 import cors from "cors";
+import config from 'config';
 
 import router from "./router";
 import mongoose from "mongoose";
@@ -26,12 +27,12 @@ server.listen(8080, () => {
   console.log("Server running on http://localhost:8080/");
 });
 
-const MONGO_URL = process.env.DBHOST;
-// const MONGO_URL2 = "mongodb://localhost:27017/";
+const MONGO_URL: string = config.get('DBHOST');
+console.log(MONGO_URL);
 
-// mongoose.set("strictQuery", false);
+mongoose.set("strictQuery", false);
 // mongoose.Promise = Promise;
-// mongoose.connect(MONGO_URL2);
-// mongoose.connection.on("error", (error: Error) => console.log(error));
+mongoose.connect(MONGO_URL);
+mongoose.connection.on("error", (error: Error) => console.log(error));
 
 app.use("/", router());

@@ -32,7 +32,7 @@ docker-compose -f docker-compose.yml -f docker-compose.prod.yml up
 ```
 
 ## Testing
-
+The order of loading the config files is determined by `NODE_ENV` environment variable. Currently, it is set in `package.json` before executing the relevant commands (see `script` object in the file). The names of the config should match the corresponding `EXT` in the `.env.{EXT}` files. To fully understand how Config finds the correct file, read the order list in the official [GitHub page](https://github.com/node-config/node-config/wiki/Configuration-Files#file-load-order).
 
 # Notes
 ## Hot Reload

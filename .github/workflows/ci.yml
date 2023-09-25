@@ -37,6 +37,8 @@ jobs:
       run: |
         npm ci
         npm run build --if-present
+        npm test
       env:
         DBHOST: ${{ secrets.DBHOST }}
         ACCESS_TOKEN_SECRET: ${{ secrets.ACCESS_TOKEN_SECRET }}
+        NODE_ENV: production

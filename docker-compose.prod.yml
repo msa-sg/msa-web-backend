@@ -5,3 +5,5 @@ services:
     build:
       target: production
     command: npm start
+    environment:
+      - NODE_ENV=production
