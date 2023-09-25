@@ -4,7 +4,7 @@ import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
 import compression from "compression";
 import cors from "cors";
-import config from 'config';
+import config from './config';
 
 import router from "./router";
 import mongoose from "mongoose";
@@ -23,11 +23,11 @@ app.use(bodyParser.json());
 
 const server = http.createServer(app);
 
-server.listen(8080, () => {
-  console.log("Server running on http://localhost:8080/");
+server.listen(config.server.port, () => {
+  console.log(`Server running on http://${config.server.hostname}:${config.server.port}/`);
 });
 
-const MONGO_URL: string = config.get('DBHOST');
+const MONGO_URL: string = config.db.host;
 console.log(MONGO_URL);
 
 mongoose.set("strictQuery", false);

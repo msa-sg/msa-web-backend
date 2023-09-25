@@ -3,7 +3,7 @@ import chaiHttp from 'chai-http';
 import { expect } from 'chai';
 // import app from '../src/index'; // Import your Express app
 import mongoose from 'mongoose';
-import config from 'config';
+import config from '../src/config';
 
 chai.use(chaiHttp);
 
@@ -11,7 +11,7 @@ describe('Database Connection', () => {
     before((done) => {
         mongoose
             .set('strictQuery', false)
-            .connect(config.get("DBHOST"), {
+            .connect(config.db.host, {
                 // useNewUrlParser: true,
                 // useUnifiedTopology: true,
             })
