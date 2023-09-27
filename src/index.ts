@@ -38,4 +38,8 @@ mongoose.connect(MONGO_URL);
 mongoose.connection.on('connected', () => {console.log('MongoDB connected');});
 mongoose.connection.on("error", (error: Error) => console.log(error));
 
+app.get("/", async (req: express.Request, res: express.Response) => {
+  res.send("Backend API");
+})
+
 app.use("/", router());

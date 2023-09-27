@@ -16,7 +16,7 @@ services:
     environment:
       - DB_HOST=mongodb://mongo:27017/
     ports:
-      - '3000:4000'
+      - '4000:3000'
   mongo:
     restart: always
     image: mongo:4.2.0
@@ -30,3 +30,4 @@ services:
       timeout: 10s
       retries: 5
       start_period: 40s
+    command: mongod --quiet
