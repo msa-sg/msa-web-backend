@@ -1,17 +1,27 @@
-FROM node:18 as base
+ARG NODE_VERSION=18.0.0
 
-WORKDIR /home/node/app
-
-COPY package*.json ./
-
+FROM node:${NODE_VERSION}-alpine as base
 RUN npm install -g typescript
+WORKDIR /usr/src/app
+EXPOSE 3000
 
-RUN npm i
-
+FROM base as dev
+RUN --mount=type=bind,source=package.json,target=package.json \
+    --mount=type=bind,source=package-lock.json,target=package-lock.json \
+    --mount=type=cache,target=/root/.npm \
+    npm ci --include=dev
+USER node
 COPY . .
+CMD npm run dev
 
-FROM base as production
-
+FROM base as prod
+ENV NODE_ENV production
 ENV NODE_PATH=./dist
-
+RUN --mount=type=bind,source=package.json,target=package.json \
+    --mount=type=bind,source=package-lock.json,target=package-lock.json \
+    --mount=type=cache,target=/root/.npm \
+    npm ci --omit=dev
+COPY . .
 RUN npm run build
+USER node
+CMD npm start

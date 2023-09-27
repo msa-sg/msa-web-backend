@@ -12,14 +12,14 @@ interface Config {
 }
 
 const configparams: Config = {
-  db: {
-    host: "mongodb://localhost:27017/",
-  },
-  server: {
-    hostname: "localhost",
-    port: 8080,
-  },
-};
+    db: {
+        host: "mongodb://mongo:27017/"
+    },
+    server: {
+        hostname: "localhost",
+        port: 8080
+    }
+}
 
 if (process.env.NODE_ENV === "production") {
   console.log("Loading production configs");
