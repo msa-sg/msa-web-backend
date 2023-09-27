@@ -1,9 +1,10 @@
 ARG NODE_VERSION=18.0.0
 
 FROM node:${NODE_VERSION}-alpine as base
-RUN npm install -g typescript
 WORKDIR /usr/src/app
-EXPOSE 3000
+RUN npm install -g typescript
+ENV PORT=3000
+EXPOSE ${PORT}
 
 FROM base as dev
 RUN --mount=type=bind,source=package.json,target=package.json \

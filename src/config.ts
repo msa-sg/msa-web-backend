@@ -7,26 +7,28 @@ interface Config {
   };
   server: {
     hostname: string;
-    port?: number;
+    port: string;
   };
 }
 
 const configparams: Config = {
     db: {
-        host: "mongodb://mongo:27017/"
+        host: process.env.DB_HOST || "mongodb://localhost:27017/"
     },
     server: {
-        hostname: "localhost",
-        port: 8080
+        hostname: process.env.DOMAIN || "localhost",
+        port: process.env.PORT || "8080"
     }
 }
 
 if (process.env.NODE_ENV === "production") {
   console.log("Loading production configs");
   configparams.db.host = process.env.DBHOST;
-} else if (process.env.NODE_ENV === "test") {
+} 
+else if (process.env.NODE_ENV === "test") {
   console.log("Loading test configs");
-} else {
+} 
+else {
   console.log("Loading development configs");
 }
 
