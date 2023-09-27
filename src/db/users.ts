@@ -10,6 +10,15 @@ const UserSchema = new mongoose.Schema({
     salt: { type: String, select: false },
     sessionToken: { type: String, select: false },
   },
+  creationDt: { type: Date, default: Date.now, required: true },
+  role: { type: String, default: "User", required: true }, // to be updated later on
+  course: { type: String, required: false },
+  gender: { type: String, required: false },
+  firstName: { type: String, required: false },
+  lastName: { type: String, required: false },
+  uniEntryYear: { type: Date, required: false },
+  origin: { type: String, required: false },
+  profilePhotoLoc: { type: String, required: false },
 });
 
 export const UserModel = mongoose.model("User", UserSchema);
