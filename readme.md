@@ -31,7 +31,7 @@ GitHub Actions will test the code and generate the latest image in Docker Hub (s
 ## Deployment (Manual)
 The `docker-compose.prod.yml` file builds on `docker-compose.yml`. The order of the files below matters, as we want the configs in the latter filename to overwrite conflicting configs.
 ```bash
-docker-compose -f docker-compose.yml -f docker-compose.prod.yml up
+docker-compose -f docker-compose.yml -f docker-compose.prod.yml up # add --build flag if you just edited docker-compose or Dockerfile
 ```
 
 ## Testing
