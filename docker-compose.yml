@@ -1,17 +1,32 @@
 version: '3.7'
 
 services:
-  ts-node-docker:
+  server:
+    container_name: server
     build:
       context: .
       dockerfile: Dockerfile
-      target: base
+      target: dev
     volumes:
-      - ./src:/home/node/app/src
-      - ./nodemon.json:/home/node/app/nodemon.json
-    container_name: ts-node-docker
-    expose:
-      - '4000'
+      - ./src:/usr/src/app/src
+      - ./nodemon.json:/usr/src/app/nodemon.json
+    environment:
+      - NODE_ENV=production
+    depends_on:
+      mongo:
+        condition: service_healthy
     ports:
-      - '4000:4000'
-    command: npm run dev
+      - '3000:3000'
+  mongo:
+    restart: always
+    image: mongo:4.2.0
+    volumes:
+      - ./data:/data/db
+    expose:
+      - 27017
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongo mongo:27017/test --quiet
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 40s

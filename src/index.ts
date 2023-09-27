@@ -33,6 +33,7 @@ console.log(MONGO_URL);
 mongoose.set("strictQuery", false);
 // mongoose.Promise = Promise;
 mongoose.connect(MONGO_URL);
+mongoose.connection.on('connected', () => {console.log('MongoDB connected');});
 mongoose.connection.on("error", (error: Error) => console.log(error));
 
 app.use("/", router());
