@@ -1,3 +1,4 @@
 {
-    "mongoURI": "mongodb+srv://msasoftware:MiErR2AoyveU9q3S@cluster0.e8df7ll.mongodb.net/?retryWrites=true&w=majority"
+  "mongoURI": "mongodb+srv://msasoftware:MiErR2AoyveU9q3S@cluster0.e8df7ll.mongodb.net/?retryWrites=true&w=majority",
+  "mongoURI2": "mongodb+srv://clee080:passworD@cluster0.x62uono.mongodb.net/?retryWrites=true&w=majority"
 }
