@@ -7,6 +7,7 @@
   - [CI/CD](#cicd)
   - [Deployment (Manual)](#deployment-manual)
   - [Testing](#testing)
+    - [GitHub Workflow](#github-workflow)
 - [Notes](#notes)
   - [Hot Reload](#hot-reload)
 
@@ -43,6 +44,22 @@ docker compose -f docker-compose-test.yml run intg-test-server npm test --exit-c
 You can also run `npm test` locally, but make sure to start its dependencies (MongoDB in this case) before running the script.
 
 The order of loading the config files is determined by `NODE_ENV` environment variable. Currently, it is set in `package.json` before executing the relevant commands (see `script` object in the file). The names of the config should match the corresponding `EXT` in the `.env.{EXT}` files. To fully understand how Config finds the correct file, read the order list in the official [GitHub page](https://github.com/node-config/node-config/wiki/Configuration-Files#file-load-order).
+
+### GitHub Workflow
+If you are developing GitHub workflows, you may need to have a faster feedback loop to ensure your workflows run correctly. This is achieved with [Act](https://github.com/nektos/act) tool, which is the same as GitHub Workflow tool, except that it can run locally. Install it on your machine (follow the links provided in the website above). Create a file with the same format like `.env` and run
+```bash
+act -j build --secret-file <your-secret-file-loc>     # if you install on Windows or Linux
+gh act -j build --secret-file <your-secret-file-loc>     # if you install on GitHub CLI (ie you have also installed gh)
+```
+
+The command basically runs a job named 'build', after supplying the local GitHub Action with the location of the secret file.
+
+What should the secret file contain? In this example, go to the `.github` folder and find the workflow that has `build` job. Those expressions with a prefix of `secrets.` are the variables you should write in the secret file. For example, if you see `${{ secrets.DOCKER_USERNAME }}` in the job, your secret file should contain this line:
+```
+DOCKER_USERNAME=myusername
+```
+
+Note that Act cannot process variables like `${{ github.event.repository.name }}` as it is only available when the workflow is run on GitHub itself. Therefore, when testing locally, you can uncomment that line and replace it with a fixed name.
 
 # Notes
 ## Hot Reload
