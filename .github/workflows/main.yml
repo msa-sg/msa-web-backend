@@ -1,9 +1,9 @@
-name: main
+name: ci
 
 on:
   push:
     branches:
-      - dock_dev
+      - "main"
 
 jobs:
   build:
@@ -21,9 +21,9 @@ jobs:
       -
         name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-      # -
-      #   name: Execute integration tests
-      #   run: docker compose -f docker-compose-test.yml run intg-test-server npm test --exit-code-from --remove-orphans
+      -
+        name: Execute integration tests
+        run: docker compose -f docker-compose-test.yml run intg-test-server npm test --exit-code-from --remove-orphans
       -
         name: Build and push
         # if: ${{ !env.ACT }}
@@ -32,6 +32,4 @@ jobs:
           context: .
           push: true
           target: prod
-          # tags: ${{ secrets.DOCKER_USERNAME }}/${{ github.event.repository.name }}:latest
-
-          tags: ${{ secrets.DOCKER_USERNAME }}/msasg-backend:latest
+          tags: ${{ secrets.DOCKER_USERNAME }}/${{ github.event.repository.name }}:latest
