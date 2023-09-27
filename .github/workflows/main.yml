@@ -2,8 +2,9 @@ name: ci
 
 on:
   push:
-    branches:
-      - "main"
+    branches: [ "*" ]
+  pull_request:
+    branches: [ "*" ]
 
 jobs:
   build:
@@ -26,7 +27,7 @@ jobs:
         run: docker compose -f docker-compose-test.yml run intg-test-server npm test --exit-code-from --remove-orphans
       -
         name: Build and push
-        # if: ${{ !env.ACT }}
+        if: ${{ !env.ACT }} && github.ref == 'refs/heads/main'
         uses: docker/build-push-action@v5
         with:
           context: .
