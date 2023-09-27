@@ -4,6 +4,7 @@ import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
 import compression from "compression";
 import cors from "cors";
+import config from './config';
 
 import router from "./router";
 import mongoose from "mongoose";
@@ -24,16 +25,26 @@ app.use(bodyParser.json());
 
 const server = http.createServer(app);
 
-server.listen(8080, () => {
-  console.log("Server running on http://localhost:8080/");
+server.listen(config.server.port, () => {
+  console.log(`Server running on http://${config.server.hostname}:${config.server.port}/`);
 });
 
+<<<<<<< HEAD
 // DB connection (old)
 // const MONGO_URL = config.get("mongoURI2");
 // mongoose.set("strictQuery", false);
 // mongoose.Promise = Promise;
 // mongoose.connect(MONGO_URL);
 // mongoose.connection.on("error", (error: Error) => console.log(error));
+=======
+const MONGO_URL: string = config.db.host;
+console.log(MONGO_URL);
+
+mongoose.set("strictQuery", false);
+// mongoose.Promise = Promise;
+mongoose.connect(MONGO_URL);
+mongoose.connection.on("error", (error: Error) => console.log(error));
+>>>>>>> 7268875442cfec70524439cb27e0f2f526b7ef9f
 
 // DB connection(new)
 // const dbURI = config.get("mongoURI");
