@@ -9,6 +9,7 @@ interface Config {
     hostname: string;
     port: string;
   };
+  access_token_secret: string
 }
 
 const configparams: Config = {
@@ -18,7 +19,8 @@ const configparams: Config = {
     server: {
         hostname: process.env.DOMAIN || "localhost",
         port: process.env.PORT || "8080"
-    }
+    },
+    access_token_secret: process.env.ACCESS_TOKEN_SECRET || "SECRET",
 }
 
 if (process.env.NODE_ENV === "production") {

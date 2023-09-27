@@ -1,6 +1,6 @@
 <h1>MSA Backend</h1>
 
-![Build Status](https://github.com/msa-sg/msa-web-backend/actions/workflows/ci.yml/badge.svg?branch=main)
+![Build Status](https://github.com/msa-sg/msa-web-backend/actions/workflows/main.yml/badge.svg?branch=main)
 
 - [Developers](#developers)
   - [Development](#development)

@@ -1,6 +1,7 @@
 import crypto from "crypto";
+import config from '../config'
 
-const SECRET = "SECRET";
+const SECRET = config.access_token_secret;
 
 export const authentication = (salt: string, password: string): string => {
   return crypto
