@@ -17,8 +17,7 @@ Config files are created to modularly set up different environments. By default,
 ## Development
 Nodemon is used to monitor file changes, thus giving you faster feedback during development. Docker-compose is used so that you can test your changes with a local database (ie. on your machine) for faster development. In any terminal,
 ```bash
-docker-compose build  # run once only when docker-compose.yml is changed
-docker-compose up  --remove-orphans # run every time you want to develop. Add -d flag if you want to see the output in Docker desktop's window
+docker-compose up --build --remove-orphans # run every time you want to develop. Add -d flag if you want to see the output in Docker desktop's window
 ```
 
 When you are taking a break, tear down the compose with
@@ -36,6 +35,13 @@ docker-compose -f docker-compose.yml -f docker-compose.prod.yml up
 ```
 
 ## Testing
+To check before pushing to GitHub, run
+```bash
+docker compose -f docker-compose-test.yml run intg-test-server npm test --exit-code-from --remove-orphans
+```
+
+You can also run `npm test` locally, but make sure to start its dependencies (MongoDB in this case) before running the script.
+
 The order of loading the config files is determined by `NODE_ENV` environment variable. Currently, it is set in `package.json` before executing the relevant commands (see `script` object in the file). The names of the config should match the corresponding `EXT` in the `.env.{EXT}` files. To fully understand how Config finds the correct file, read the order list in the official [GitHub page](https://github.com/node-config/node-config/wiki/Configuration-Files#file-load-order).
 
 # Notes
