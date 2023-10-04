@@ -14,7 +14,7 @@ interface Config {
 
 const configparams: Config = {
     db: {
-        host: process.env.DB_HOST || "mongodb://localhost:27017/"
+        host: process.env.DBHOST || "mongodb://localhost:27017/"
     },
     server: {
         hostname: process.env.DOMAIN || "localhost",
