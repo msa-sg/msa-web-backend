@@ -10,10 +10,9 @@ services:
     depends_on:
       mongo:
         condition: service_healthy
-    ports:
-      - '3000:3000'
     environment:
-      - DB_HOST=mongodb://mongo:27017/
+      - DBHOST=mongodb://mongo:27017/
+      - PORT=3000
   mongo:
     restart: always
     image: mongo:4.2.0
