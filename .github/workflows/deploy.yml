@@ -17,7 +17,7 @@ on:
 
 #2
 env:
-    # REGISTRY: "your-digitalocean-registry-container-url"
+    DBHOST: ${{ secrets.DBHOST }}
     IMAGE_NAME: ${{ github.event.repository.name }}
 
 jobs:   
@@ -41,5 +41,4 @@ jobs:
             docker stop $(echo $IMAGE_NAME)
             docker rm $(echo $IMAGE_NAME)
             # Run a new container from a new image
-            docker run -d --pull always --restart always --name $(echo $IMAGE_NAME) -e DBHOST=${{ secrets.DBHOST }} \
-              -p 80:8080 ${{ secrets.DOCKER_USERNAME }}/${{ github.event.repository.name }}:latest
+            docker run -d --pull always --restart always --name $(echo $IMAGE_NAME) -e DBHOST=${DBHOST} -p 80:8080 ${{ secrets.DOCKER_USERNAME }}/${{ github.event.repository.name }}:latest
