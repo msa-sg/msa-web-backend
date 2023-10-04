@@ -4,7 +4,7 @@ on:
   # the 1st condition
   workflow_run:
     workflows: ["ci"]
-    branches: [main]
+    branches: ["deploy"]
     types:
       - completed
 
