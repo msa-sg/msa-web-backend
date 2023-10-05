@@ -30,7 +30,7 @@ jobs:
         name: Execute integration tests
         run: docker compose -f docker-compose-test.yml run intg-test-server npm test --exit-code-from --remove-orphans
   deploy:
-    if: github.ref == 'refs/head/main'
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     
     steps:
