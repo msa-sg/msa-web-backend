@@ -36,9 +36,13 @@ jobs:
           envs: IMAGE_NAME,{{ secrets.DIGITALOCEAN_ACCESS_TOKEN }},DBHOST
           script: |
             # Login to registry
-            docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
+            # docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
             # Stop and remove running container
-            docker stop $(echo $IMAGE_NAME)
-            docker rm $(echo $IMAGE_NAME)
+            # docker stop $(echo $IMAGE_NAME)
+            # docker rm $(echo $IMAGE_NAME)
             # Run a new container from a new image
-            docker run -d --pull always --restart always --name $(echo $IMAGE_NAME) -e DBHOST=$(echo $DBHOST) -p 80:8080 ${{ secrets.DOCKER_USERNAME }}/${{ github.event.repository.name }}:latest
+            docker-compose down
+            git clone https://github.com/msa-sg/msa-web-backend.git
+            cd msa-web-backend
+            docker-compose -f docker-compose.yml -f docker-compose.prod.yml up
+            # docker run -d --pull always --restart always --name $(echo $IMAGE_NAME) -e DBHOST=$(echo $DBHOST) -p 80:8080 ${{ secrets.DOCKER_USERNAME }}/${{ github.event.repository.name }}:latest

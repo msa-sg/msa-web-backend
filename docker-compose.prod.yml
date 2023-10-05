@@ -1,10 +1,33 @@
 version: '3.7'
 
 services:
-  server:
+  msa-app:
     build:
       target: prod
     command: npm start
+    container_name: msa-app
     environment:
       - NODE_ENV=production
       - NODE_PATH=./dist
+      - DBHOST='mongodb+srv://msasoftware:MiErR2AoyveU9q3S@cluster0.e8df7ll.mongodb.net/?retryWrites=true&w=majority'
+    networks:
+      - app-network
+  webserver:
+    image: nginx:mainline-alpine
+    container_name: webserver
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx-conf:/etc/nginx/conf.d
+      - ../ssl_bundle.crt:/etc/ssl/msa.live/ssl_bundle.crt
+      - ../msasg.live.key:/etc/ssl/msa.live/msasg.live.key
+    depends_on:
+      - msa-app
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge  
