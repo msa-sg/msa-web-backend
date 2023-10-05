@@ -3,7 +3,7 @@ ARG NODE_VERSION=18.0.0
 FROM node:${NODE_VERSION}-alpine as base
 WORKDIR /usr/src/app
 RUN npm install -g typescript
-ENV PORT 4000
+ENV PORT=4000
 EXPOSE ${PORT}
 
 FROM base as dev
