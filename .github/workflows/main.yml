@@ -1,10 +1,14 @@
-name: ci
+name: ci-cd
 
 on:
   push:
     branches: [ "*" ]
   pull_request:
     branches: [ "*" ]
+
+env:
+  DBHOST: ${{ secrets.DBHOST }}
+  IMAGE_NAME: ${{ github.event.repository.name }}
 
 jobs:
   build:
@@ -25,3 +29,34 @@ jobs:
       -
         name: Execute integration tests
         run: docker compose -f docker-compose-test.yml run intg-test-server npm test --exit-code-from --remove-orphans
+  deploy:
+    if: github.ref == 'refs/head/main'
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Build and push
+        if: ${{ !env.ACT }}
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          target: prod
+          tags: ${{ secrets.DOCKER_USERNAME }}/${{ github.event.repository.name }}:latest
+        env:
+          ACCESS_TOKEN_SECRET: ${{ secrets.ACCESS_TOKEN_SECRET }}
+      - name: Deploy to Digital Ocean droplet via SSH action
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSHKEY }}
+          passphrase: ${{ secrets.PASSPHRASE }}
+          envs: IMAGE_NAME,{{ secrets.DIGITALOCEAN_ACCESS_TOKEN }},DBHOST
+          script: |
+            # Login to registry
+            docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
+            # Stop and remove running container
+            docker stop $(echo $IMAGE_NAME)
+            docker rm $(echo $IMAGE_NAME)
+            # Run a new container from a new image
+            docker run -d --pull always --restart always --name $(echo $IMAGE_NAME) -e DBHOST=$(echo $DBHOST) -p 80:8080 ${{ secrets.DOCKER_USERNAME }}/${{ github.event.repository.name }}:latest
