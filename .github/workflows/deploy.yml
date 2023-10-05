@@ -26,6 +26,16 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
+      - name: Build and push
+        if: ${{ !env.ACT }}
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          target: prod
+          tags: ${{ secrets.DOCKER_USERNAME }}/${{ github.event.repository.name }}:latest
+        env:
+          ACCESS_TOKEN_SECRET: ${{ secrets.ACCESS_TOKEN_SECRET }}
       - name: Deploy to Digital Ocean droplet via SSH action
         uses: appleboy/ssh-action@master
         with:

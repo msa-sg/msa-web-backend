@@ -25,14 +25,3 @@ jobs:
       -
         name: Execute integration tests
         run: docker compose -f docker-compose-test.yml run intg-test-server npm test --exit-code-from --remove-orphans
-      -
-        name: Build and push
-        if: ${{ !env.ACT }} && github.ref == 'refs/heads/main'
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          push: true
-          target: prod
-          tags: ${{ secrets.DOCKER_USERNAME }}/${{ github.event.repository.name }}:latest
-        env:
-          ACCESS_TOKEN_SECRET: ${{ secrets.ACCESS_TOKEN_SECRET }}
