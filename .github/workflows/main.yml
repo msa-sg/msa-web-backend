@@ -29,13 +29,8 @@ jobs:
       -
         name: Execute integration tests
         run: docker compose -f docker-compose-test.yml run intg-test-server npm test --exit-code-from --remove-orphans
-  deploy:
-    if: github.ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
-    
-    steps:
       - name: Build and push
-        if: ${{ !env.ACT }}
+        if: github.ref == 'refs/heads/main' && ${{ !env.ACT }}
         uses: docker/build-push-action@v5
         with:
           context: .
@@ -44,6 +39,11 @@ jobs:
           tags: ${{ secrets.DOCKER_USERNAME }}/${{ github.event.repository.name }}:latest
         env:
           ACCESS_TOKEN_SECRET: ${{ secrets.ACCESS_TOKEN_SECRET }}
+  deploy:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    
+    steps:
       - name: Deploy to Digital Ocean droplet via SSH action
         uses: appleboy/ssh-action@master
         with:
