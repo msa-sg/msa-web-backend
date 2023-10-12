@@ -10,14 +10,14 @@ const EventSchema = new mongoose.Schema({
     venue: {type: String},
     posterLoc: {type: String, 
       validate: {
-        validator: function(urlString){
+        validator: function(urlString: String){
           return urlString.startsWith('http');
         }
       }
     },
     promoVideoLink: {type: String, 
       validate: {
-        validator: function(urlString){
+        validator: function(urlString: String){
           return urlString.startsWith('http');
         }
       }

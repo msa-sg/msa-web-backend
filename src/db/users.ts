@@ -1,5 +1,24 @@
 import mongoose from "mongoose";
 
+// Term Config
+const TermSchema = new mongoose.Schema({
+  position: {
+    type: mongoose.SchemaTypes.ObjectId,
+    ref: 'Committee'
+  },
+  term: { type: Number },
+  startDt: { type: Date },
+  endDt: { type: Date },
+  comPhotoLoc: {
+    type: String,
+    validate: {
+      validator: function (urlString: String) {
+        return urlString.startsWith("http");
+      }
+    }
+  }
+})
+
 // User Config
 const UserSchema = new mongoose.Schema({
   email: { type: String, required: true },
@@ -19,6 +38,7 @@ const UserSchema = new mongoose.Schema({
   uniEntryYear: { type: Date, required: false },
   origin: { type: String, required: false },
   profilePhotoLoc: { type: String, required: false },
+  committee: [TermSchema]
 });
 
 export const UserModel = mongoose.model("User", UserSchema);
