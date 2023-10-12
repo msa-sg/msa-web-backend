@@ -11,3 +11,12 @@ const TicketSchema = new Schema({
 });
 
 export const TicketModel = model("Ticket", TicketSchema);
+
+export const getTickets = () => TicketModel.find();
+export const getTicketById = (id: string) => TicketModel.findById(id);
+export const createTicket = (values: Record<string, any>) =>
+  new TicketModel(values).save().then((Ticket) => Ticket.toObject());
+export const deleteTicketById = (id: string) =>
+  TicketModel.findOneAndDelete({ _id: id });
+export const updateTicketById = (id: string, values: Record<string, any>) =>
+  TicketModel.findByIdAndUpdate(id, values);
