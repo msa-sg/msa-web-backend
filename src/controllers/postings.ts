@@ -48,8 +48,9 @@ export const createPosting = async (
             comPhotoLoc: comPhotoLoc
         });
         await user.save();
+        const result = {"id": userid}
 
-        return res.status(200).json(userid);
+        return res.status(200).json(result);
     }
     catch (e) {
         return res.status(400).json(e.message);
