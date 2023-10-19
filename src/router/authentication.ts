@@ -3,6 +3,9 @@ import express from 'express';
 import { login, register } from '../controllers/authentication';
 
 export default (router: express.Router) => {
-  router.post('/auth/register', register);
-  router.post('/auth/login', login);
+  const authRouter = express.Router();
+  router.use('/auth', authRouter);
+
+  authRouter.post('/register', register);
+  authRouter.post('/login', login);
 };

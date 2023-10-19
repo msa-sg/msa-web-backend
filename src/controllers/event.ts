@@ -36,7 +36,7 @@ export const createEvent = async (
     const { name, desc, startDt,
         endDt, seatLimit, venue,
         posterLoc, promoVideoLink,
-        registerStartDt, registerEndDt
+        registerStartDt, registerEndDt, entryPrice
     } = req.body;
 
     try {
@@ -44,9 +44,9 @@ export const createEvent = async (
             name, desc, startDt,
             endDt, seatLimit, venue,
             posterLoc, promoVideoLink,
-            registerStartDt, registerEndDt
+            registerStartDt, registerEndDt, entryPrice
         });
-        return res.status(200).json(result);
+        return res.status(201).json(result);
     }
     catch (e) {
         return res.status(400).json(e.message);
@@ -77,7 +77,7 @@ export const updateEvent = async (
         const fields = ['name', 'desc', 'startDt',
             'endDt', 'seatLimit', 'venue',
             'posterLoc', 'promoVideoLink',
-            'registerStartDt', 'registerEndDt'];
+            'registerStartDt', 'registerEndDt', 'entryPrice'];
         for(const field of fields){
             if(req.body[field] !== undefined){
                 updateFields[field] = req.body[field];

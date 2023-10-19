@@ -1,13 +1,14 @@
-import {Schema, model} from "mongoose";
+import {Schema, SchemaTypes, model} from "mongoose";
 import { EventModel } from "./event";
 import { UserModel } from "./users";
 
 const TicketSchema = new Schema({
     purchasePrice: {type: Number, required: true},
-    eventId: {type: Schema.Types.UUID, ref: EventModel.name},
-    userId: {type: Schema.Types.UUID, ref: UserModel.name},
+    eventId: {type: SchemaTypes.ObjectId, ref: EventModel.name},
+    userId: {type: SchemaTypes.ObjectId, ref: UserModel.name},
     paymentReceipt: {type: Schema.Types.UUID},
-    purchaseDt: {type: Date, required: true}
+    purchaseDt: {type: Date, default: () => Date.now(), immutable: true},
+    status: {type: String, default: "Unreserved"} // unreserved, reserved (between the period the user applies and pays), booked (when user has paid)
 });
 
 export const TicketModel = model("Ticket", TicketSchema);

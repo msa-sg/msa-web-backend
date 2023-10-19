@@ -4,8 +4,11 @@ import { getAllUsers, deleteUser, updateUser } from "../controllers/users";
 import { isAuthenticated, isOwner, isAdmin } from "../middlewares";
 
 export default (router: express.Router) => {
-  // router.get("/users", getAllUsers);
-  router.get("/users", isAuthenticated, isAdmin, getAllUsers);
-  router.delete("/users/:id", isAuthenticated, isOwner, deleteUser);
-  router.patch("/users/:id", isAuthenticated, isOwner, updateUser);
+  const userRouter = express.Router();
+  router.use('/users', userRouter);
+
+  // userRouter.get("/", getAllUsers);
+  userRouter.get("/", isAuthenticated, isAdmin, getAllUsers);
+  userRouter.delete("/:id", isAuthenticated, isOwner, deleteUser);
+  userRouter.patch("/:id", isAuthenticated, isOwner, updateUser);
 };

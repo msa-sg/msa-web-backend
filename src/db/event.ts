@@ -23,7 +23,8 @@ const EventSchema = new mongoose.Schema({
       }
     },
     registerStartDt: {type: Date},
-    registerEndDt: {type: Date}
+    registerEndDt: {type: Date},
+    entryPrice: {type: Number, default: 0}
 });
 
 export const EventModel = mongoose.model("Event", EventSchema);

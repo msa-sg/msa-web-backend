@@ -2,9 +2,12 @@ import { deletePosting, getPostings, createPosting, updatePosting } from "../con
 import express from "express";
 
 export default (router: express.Router) => {
-  router.get("/postings", getPostings); // ?position?term?user
-  router.post("/postings/:id", createPosting); // userid, commid
-  router.delete("/postings/:id", deletePosting); // userid, commid
-  router.put("/postings/:id", updatePosting); // userid, commid
+  const postingsRouter = express.Router();
+  router.use('/postings', postingsRouter);
+
+  postingsRouter.get("/", getPostings); // ?position?term?user
+  postingsRouter.post("/:id", createPosting); // userid, commid
+  postingsRouter.delete("/:id", deletePosting); // userid, commid
+  postingsRouter.put("/:id", updatePosting); // userid, commid
 };
 
