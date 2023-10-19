@@ -1,5 +1,5 @@
 import express from "express";
-import * as Users from "../db/users";
+import * as Users from "db/users";
 import { toInteger } from "lodash";
 
 export const getPostings = async (

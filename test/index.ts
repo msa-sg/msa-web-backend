@@ -1,9 +1,9 @@
 import chai from 'chai';
 import chaiHttp from 'chai-http';
 import { expect } from 'chai';
-// import app from '../src/index'; // Import your Express app
+// import app from 'src/index'; // Import your Express app
 import mongoose from 'mongoose';
-import config from '../src/config';
+import config from 'src/config';
 
 chai.use(chaiHttp);
 

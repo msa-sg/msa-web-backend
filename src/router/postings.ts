@@ -1,4 +1,4 @@
-import { deletePosting, getPostings, createPosting, updatePosting } from "../controllers/postings";
+import { deletePosting, getPostings, createPosting, updatePosting } from "controllers/postings";
 import express from "express";
 
 export default (router: express.Router) => {

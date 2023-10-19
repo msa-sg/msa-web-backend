@@ -1,5 +1,5 @@
 import express from "express";
-import * as Events from "../db/event";
+import * as Events from "db/event";
 
 export const getEvents = async (
     req: express.Request,

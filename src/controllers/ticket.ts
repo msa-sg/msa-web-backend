@@ -9,7 +9,7 @@ export const ticketsGet = async (
     const {userid, eid} = req.query;
 
     try{
-        getTickets()
+        // getTickets()
     }
     catch(e){
         console.log(e.message);

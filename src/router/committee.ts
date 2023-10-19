@@ -1,4 +1,4 @@
-import { deleteCommittee, getCommittee, getCommittees, createCommittee, updateCommittee } from "../controllers/committees";
+import { deleteCommittee, getCommittee, getCommittees, createCommittee, updateCommittee } from "controllers/committees";
 import express from "express";
 
 export default (router: express.Router) => {

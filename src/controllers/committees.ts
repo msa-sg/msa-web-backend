@@ -1,5 +1,5 @@
 import express from "express";
-import * as Committees from "../db/committee";
+import * as Committees from "db/committee";
 
 export const getCommittees = async (
     req: express.Request,
