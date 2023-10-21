@@ -43,7 +43,7 @@ export const ticketCreate = async (
         }
 
         const ticket = await TicketModel.create({purchasePrice: event.entryPrice, userId: userid, eventId: eid})
-        res.status(200).json(ticket.toObject());
+        res.status(201).json(ticket.toObject());
     }
     catch(e){
         console.log(e.message);
@@ -51,22 +51,7 @@ export const ticketCreate = async (
 }
 
 
-export const ticketReserve = async (
-    req: express.Request,
-    res: express.Response
-) => {
-    const {id: tid} = req.params;
-
-    try{
-        
-    }
-    catch(e){
-
-    }
-}
-
-
-export const ticketBook = async (
+export const singleTicketUpdate = async (
     req: express.Request,
     res: express.Response
 ) => {
