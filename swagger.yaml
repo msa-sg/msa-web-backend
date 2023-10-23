@@ -1,0 +1,197 @@
+openapi: "3.0.0"
+info:
+  title: MSA Backend API
+  description: Backend for MSA main website and ticketing system.
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:8080
+paths:
+  /auth/register:
+    post:
+      tags:
+        - Accounts
+      summary: Creates a user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+                  format: password
+                email:
+                  type: string
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+        '400':
+          description: Not enough data
+  /auth/login:
+    post:
+      tags:
+        - Accounts
+      summary: Existing user's login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                password:
+                  type: string
+                  format: password
+                email:
+                  type: string
+      responses:
+        '200':
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  data:
+                    $ref: '#/components/schemas/User'
+        '400':
+          description: Not enough data
+  /users/:
+    get:
+      description: Accessible only by role='admin' users
+      security:
+      - BasicAuth: []
+      tags:
+        - User Management
+      responses:
+        '200':
+          description: Returns all users. Used by admin
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      $ref: '#/components/schemas/User'
+  /users/{userId}:
+    delete:
+      description: deletes user. Accessible only by role='admin' users. If the user to be deleted does not originally exist, this endpoint still returns success.
+      tags:
+        - User Management
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: User ID
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Deleted
+        '400':
+          description: Error in deleting user. 
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+    patch:
+      description: Updates any field of a user **except the userId**. If the current user role='admin', any user's profile can be modified. If not, only the user's own userId can be modified. Extra fields never possessed by the user are ignored.
+      tags:
+        - User Management
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: User ID
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Update successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '401':
+          description: Not privileged to modify other user's account. This occurs whenever non-admin users request this endpoint with any userId but his own userId, regardless of whether the modified userId ever exists.
+          
+
+components:
+  securitySchemes:
+    BasicAuth:
+      type: http
+      scheme: basic
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        username:
+          type: string
+        email:
+          type: string
+        isAdmin:
+          type: boolean
+        creationDt:
+          type: string
+          description: stored as datetime in backend
+          format: date-time
+        role:
+          type: string
+          description: Either admin or user
+        course:
+          type: string
+          description: short form of NTU course
+          example: CSC
+        gender:
+          type: string
+          description: of type M or F
+        firstName:
+          type: string
+        lastName:
+          type: string
+        uniEntryYear:
+          type: integer
+        origin:
+          type: string
+          description: state, not country
+          example: Selangor
+        profilePhotoLoc:
+          type: string
+          description: URL of the photo location
+      required:
+        - email
+        - username
+        
+
+        

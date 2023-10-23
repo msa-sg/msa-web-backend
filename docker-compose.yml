@@ -14,12 +14,15 @@ services:
       mongo:
         condition: service_healthy
     environment:
-      - DB_HOST=mongodb://mongo:27017/
+      - DBHOST=mongodb://mongo:27017/
     ports:
       - '4000:4000'
+    networks:
+      - node-webapp-network
   mongo:
     restart: always
     image: mongo:4.2.0
+    container_name: mongo
     volumes:
       - ./data:/data/db
     expose:
@@ -31,3 +34,8 @@ services:
       retries: 5
       start_period: 40s
     command: mongod --quiet
+    networks:
+      - node-webapp-network
+networks:
+  node-webapp-network:
+    driver: bridge

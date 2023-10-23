@@ -1,5 +1,4 @@
 import express from "express";
-
 import { getUserByEmail, createUser } from "db/users";
 import { authentication, random } from "helpers";
 
@@ -73,8 +72,14 @@ export const register = async (req: express.Request, res: express.Response) => {
         password: authentication(salt, password),
       },
     });
+    const result = {
+      "message": "User created",
+      "data": {
+        "id": user._id
+      }
+    };
 
-    return res.status(200).json(user).end();
+    return res.status(201).json(result).end();
   } catch (error) {
     console.log(error);
     return res.sendStatus(400);
