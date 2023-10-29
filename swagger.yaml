@@ -34,15 +34,35 @@ paths:
               schema:
                 type: object
                 properties:
-                  message:
-                    type: string
                   data:
-                    type: object
-                    properties:
-                      id:
-                        type: string
+                    $ref: '#/components/schemas/User'
+          links:
+            GetUserById:
+              description: The `id` value returned can be used for `GET /users/{userId}` endpoint
+              operationId: getUser
+              parameters:
+                userId: $response.body#/id
         '400':
           description: Not enough data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  message: 
+                    type: string
+                  error:
+                    type: array
+                    items: 
+                      type: object
+                      properties:
+                        field: 
+                          type: string
+                        desc:
+                          type: string
+                  
   /auth/login:
     post:
       tags:
@@ -62,7 +82,7 @@ paths:
                   type: string
       responses:
         '200':
-          description: Created
+          description: Logged in
           content:
             application/json:
               schema:
@@ -74,6 +94,17 @@ paths:
                     $ref: '#/components/schemas/User'
         '400':
           description: Not enough data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code: 
+                    type: integer
+                  message:
+                    type: string
+        '404':
+          description: User not found. For security purposes, this is returned whenever the email does not exist, or that the password is wrong
   /users/:
     get:
       description: Accessible only by role='admin' users
@@ -96,9 +127,13 @@ paths:
                     items:
                       type: object
                       $ref: '#/components/schemas/User'
+        '401':
+          description: This user is not privileged to use this endpoint
+        '403':
+          description: User not authenticated
   /users/{userId}:
     delete:
-      description: deletes user. Accessible only by role='admin' users. If the user to be deleted does not originally exist, this endpoint still returns success.
+      description: deletes user. Accessible only by role='admin' users.
       tags:
         - User Management
       parameters:
@@ -110,10 +145,84 @@ paths:
             type: string
             format: uuid
       responses:
-        '200':
+        '204':
           description: Deleted
-        '400':
-          description: Error in deleting user. 
+        '401':
+          description: This user is not privileged to use this endpoint
+        '403':
+          description: User not authenticated
+        '404':
+          description: No such user
+    patch:
+      description: |
+        Updates any field of a user **except the userId**. A user can only update his own user profile. Extra fields never possessed by the user are ignored, whereas **supplied fields that have null values are reset**. 
+        Currently, isAdmin is the only basic authorisation mechanism. Be prepared that this field will change when the new authorisation is in place: privilege management APIs will be in another endpoint.
+      tags:
+        - User Management
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: User ID
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                isAdmin:
+                  type: boolean
+                course:
+                  type: string
+                  description: short form of NTU course
+                  example: CSC
+                gender:
+                  type: string
+                  description: of type M or F
+                firstName:
+                  type: string
+                lastName:
+                  type: string
+                uniEntryYear:
+                  type: integer
+                origin:
+                  type: string
+                  description: state, not country
+                  example: Selangor
+                profilePhoto:
+                  type: string
+                  format: binary
+                  description: File of the profile photo
+            
+      responses:
+        '200':
+          description: Update successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/User'
+        '401':
+          description: Not privileged to modify other user's account
+        '403':
+          description: User not authenticated
+        '404':
+          description: No such user  
+  /events/:
+    get:
+      description: Get all published events
+      tags:
+        - Events
+      responses:
+        '200':
+          description: Events retrieved
           content:
             application/json:
               schema:
@@ -121,28 +230,219 @@ paths:
                 properties:
                   message:
                     type: string
-    patch:
-      description: Updates any field of a user **except the userId**. If the current user role='admin', any user's profile can be modified. If not, only the user's own userId can be modified. Extra fields never possessed by the user are ignored.
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      $ref: '#/components/schemas/Event'
+    post:
+      description: Create an event
       tags:
-        - User Management
-      parameters:
-        - name: userId
-          in: path
-          required: true
-          description: User ID
-          schema:
-            type: string
-            format: uuid
+        - Events
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: Full event name
+                  example: MSA Night 2023
+                desc:
+                  type: string
+                  description: Full marketing textual description. Can be in markdown format.
+                startDt:
+                  type: string
+                  format: date-time
+                endDt:
+                  type: string
+                  format: date-time
+                poster:
+                  type: string
+                  format: binary
+                venue:
+                  type: string
+                promoVideoLink:
+                  type: string
+                  description: url of promotion video link posted on social media
+                registerStartDt:
+                  type: string
+                  format: date-time
+                registerEndDt:
+                  type: string
+                  format: date-time
+                entryPrice:
+                  type: number
+                  default: 0
+                  description: Entry price in SGD
+            encoding:
+              poster:
+                contentType: image/*
       responses:
-        '200':
-          description: Update successful
+        '201':
+          description: Event created
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
+                type: object
+                properties:
+                  message: 
+                    type: string
+                  data:
+                    $ref: '#/components/schemas/Event'
+        '400':
+          description: Invalid field format or missing values
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code: 
+                    type: integer
+                  message: 
+                    type: string
+                  error:
+                    type: array
+                    items: 
+                      type: object
         '401':
-          description: Not privileged to modify other user's account. This occurs whenever non-admin users request this endpoint with any userId but his own userId, regardless of whether the modified userId ever exists.
-          
+          description: Event must be created by admin
+        '403':
+          description: Event can only be accessed by authenticated user
+
+
+  /events/{eventId}:
+    parameters:
+      - name: eventId
+        in: path
+        required: true
+        description: Event ID
+        schema:
+          type: string
+          format: uuid
+    get:
+      tags:
+        - Events
+      description: Get a specific event
+      responses:
+        '200':
+          description: Event retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Event'
+        '403':
+          description: Event can only be accessed by authenticated user
+        '404':
+          description: Event does not exist
+    delete:
+      description: Delete an event
+      security:
+        - BasicAuth: []
+      tags:
+        - Events
+      parameters:
+      - name: eventId
+        in: path
+        required: true
+        description: Event ID
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '204':
+          description: Deleted
+        '401':
+          description: This user is not privileged to use this endpoint
+        '403':
+          description: User not authenticated
+        '404':
+          description: No such event
+      
+    patch:
+      tags:
+        - Events
+      parameters:
+      - name: eventId
+        in: path
+        required: true
+        description: Event ID
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: Full event name
+                  example: MSA Night 2023
+                desc:
+                  type: string
+                  description: Full marketing textual description. Can be in markdown format.
+                startDt:
+                  type: string
+                  format: date-time
+                endDt:
+                  type: string
+                  format: date-time
+                poster:
+                  type: string
+                  format: binary
+                venue:
+                  type: string
+                promoVideoLink:
+                  type: string
+                  description: url of promotion video link posted on social media
+                registerStartDt:
+                  type: string
+                  format: date-time
+                registerEndDt:
+                  type: string
+                  format: date-time
+                entryPrice:
+                  type: number
+                  default: 0
+                  description: Entry price in SGD
+      responses:
+        '200':
+          description: Event created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message: 
+                    type: string
+                  data:
+                    $ref: '#/components/schemas/Event'
+        '400':
+          description: Invalid field format or missing values
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code: 
+                    type: integer
+                  message: 
+                    type: string
+                  error:
+                    type: array
+                    items: 
+                      type: object
+        '401':
+          description: Event must be created by admin
+        '403':
+          description: Event can only be accessed by authenticated user
 
 components:
   securitySchemes:
@@ -155,7 +455,6 @@ components:
       properties:
         id:
           type: string
-          format: uuid
         username:
           type: string
         email:
@@ -192,6 +491,48 @@ components:
       required:
         - email
         - username
+    Event:
+      type: object
+      properties: 
+        id:
+          type: string
+        name:
+          type: string
+          description: Full event name
+          example: MSA Night 2023
+        desc:
+          type: string
+          description: Full marketing textual description. Can be in markdown format.
+        startDt:
+          type: string
+          format: date-time
+        endDt:
+          type: string
+          format: date-time
+        creationDt:
+          type: string
+          format: date-time
+        posterLoc:
+          type: string
+        venue:
+          type: string
+        promoVideoLink:
+          type: string
+          description: url of promotion video link posted on social media
+        registerStartDt:
+          type: string
+          format: date-time
+        registerEndDt:
+          type: string
+          format: date-time
+        entryPrice:
+          type: number
+          default: 0
+          description: Entry price in SGD
+      required:
+        - name
+        - startDt
+
         
 
         
