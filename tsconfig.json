@@ -6,10 +6,17 @@
     "outDir": "dist",
     "rootDir": "src",
     "sourceMap": true,
-    "strict": true
+    "strict": true,
+    "typeRoots": ["src/types/global.d.ts", "./node_modules/@types"],
+    "useUnknownInCatchVariables": false
   },
   "include": ["src/**/*"],
   "ts-node": {
-    "require": ["tsconfig-paths/register"]
-  }
+    "require": ["tsconfig-paths/register"],
+    "files": true
+  },
+  "files": [
+    "src/index.ts",
+    "src/types/global.d.ts"
+  ]
 }

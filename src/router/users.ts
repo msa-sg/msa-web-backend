@@ -1,6 +1,6 @@
 import express from "express";
 
-import { getAllUsers, deleteUser, updateUser } from "controllers/users";
+import { userGetAll, userDelete, userUpdate } from "controllers/users";
 import { isAuthenticated, isOwner, isAdmin } from "middlewares";
 
 export default (router: express.Router) => {
@@ -8,7 +8,7 @@ export default (router: express.Router) => {
   router.use('/users', userRouter);
 
   // userRouter.get("/", getAllUsers);
-  userRouter.get("/", isAuthenticated, isAdmin, getAllUsers);
-  userRouter.delete("/:id", isAuthenticated, isOwner, deleteUser);
-  userRouter.patch("/:id", isAuthenticated, isOwner, updateUser);
+  userRouter.get("/", isAuthenticated, isAdmin, userGetAll);
+  userRouter.delete("/:id", isAuthenticated, isOwner, userDelete);
+  userRouter.patch("/:id", isAuthenticated, isOwner, userUpdate);
 };

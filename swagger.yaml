@@ -35,7 +35,14 @@ paths:
                 type: object
                 properties:
                   data:
-                    $ref: '#/components/schemas/User'
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      email:
+                        type: string
+                      username:
+                        type: string
           links:
             GetUserById:
               description: The `id` value returned can be used for `GET /users/{userId}` endpoint
@@ -43,7 +50,7 @@ paths:
               parameters:
                 userId: $response.body#/id
         '400':
-          description: Not enough data
+          description: Not enough data, or the email is already taken
           content:
             application/json:
               schema:
@@ -173,7 +180,7 @@ paths:
             schema:
               type: object
               properties:
-                userId:
+                id:
                   type: string
                 isAdmin:
                   type: boolean
@@ -488,7 +495,7 @@ components:
           description: URL of the photo location
       required:
         - email
-        - userId
+        - id
     Event:
       type: object
       properties: 

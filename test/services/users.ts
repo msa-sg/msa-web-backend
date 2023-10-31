@@ -1,5 +1,5 @@
 import chai, { expect } from 'chai';
-import {createUser, deleteAllUsers, deleteUser, findUser, loginUser} from '../../src/services/users';
+import {createUser, deleteAllUsers, deleteUser, findUser, verifyUser} from '../../src/services/users';
 import {UserDocument} from '../../src/db/users';
 import chaiAsPromised from 'chai-as-promised';
 
@@ -65,10 +65,7 @@ describe('user service', () => {
         describe('given the password is correct', () => {
             it('should return true', async () => {
                 const user = await createUser(userPayload);
-                const isValid = await loginUser({
-                    email: user.email,
-                    password: userPayload.password
-                });
+                const isValid = await verifyUser(user, user.email, userPayload.password);
                 expect(isValid).to.be.true;
             })
         })

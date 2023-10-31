@@ -16,6 +16,25 @@ export async function findUser(
         else return User.findOne(query, projection, options);
 }
 
+export async function findUserById(
+    id: string, 
+    projection: ProjectionType<UserDocument> | null = null, 
+    retrieveSensitive: boolean = false,
+    options: QueryOptions = {lean: true}): Promise<UserDocument | null>{
+    
+        return findUser({_id: id}, projection, retrieveSensitive, options);
+}
+
+
+export async function findUserByEmail(
+    email: string, 
+    projection: ProjectionType<UserDocument> | null = null, 
+    retrieveSensitive: boolean = false,
+    options: QueryOptions = {lean: true}): Promise<UserDocument | null>{
+    
+        return findUser({email: email}, projection, retrieveSensitive, options);
+}
+
 export async function verifyUser(
     targetUser: UserDocument | null,
     email: UserDocument["email"],
@@ -25,9 +44,6 @@ export async function verifyUser(
     return (targetUser.email === email) && targetUser.comparePassword(password);
 }
 
-export function generateSessionToken(user: UserDocument | null): string{
-
-}
 export async function deleteUser(id: UserDocument["_id"]){
     const deleteStats: DeleteResult = await User.deleteOne({_id: id});
     if(!deleteStats.acknowledged || deleteStats.deletedCount != 1){

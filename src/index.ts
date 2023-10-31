@@ -10,14 +10,36 @@ import config from "./config";
 import yaml from 'yaml'
 import router from "./router";
 import mongoose from "mongoose";
+import session from 'express-session';
 
 const app: Application = express();
 
+// Cors
 app.use(
   cors({
     credentials: true,
   })
 );
+
+
+// Session Cookie: Let https://www.npmjs.com/package/express-session handle session instead of our own logic -- more secure
+var sess = {
+  secret: config.access_token_secret,
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    secure: false,
+    maxAge: config.session_duration
+  }
+};
+
+if(app.get('env') === 'production'){
+  app.set('trust proxy', 1);
+  sess.cookie.secure = true;
+}
+
+app.use(session(sess))
+
 
 app.use(compression());
 app.use(cookieParser());
