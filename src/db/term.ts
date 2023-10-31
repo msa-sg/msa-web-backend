@@ -1,14 +1,25 @@
 import { Schema, model } from "mongoose";
 import { CommitteeModel } from "./committee";
 import { UserModel } from "./users";
+import mongoose from 'mongoose';
 
 const TermSchema = new Schema({
-    cid: {type: Schema.Types.UUID, ref: CommitteeModel.name},
-    userid: {type: Schema.Types.UUID, ref: UserModel.name},
-    endDt: {type: Date},
-    term: {type: Number},
-    startDt: {type: Date},
-    comPhotoLoc: {type: String, match: "/^http/"}
+  position: {
+    type: mongoose.SchemaTypes.ObjectId,
+    ref: 'Committee'
+  },
+  userid: { type: Schema.Types.UUID, ref: UserModel.name },
+  endDt: { type: Date },
+  term: { type: Number },
+  startDt: { type: Date },
+  comPhotoLoc: {
+    type: String,
+    validate: {
+      validator: function (urlString: String) {
+        return urlString.startsWith("http");
+      }
+    }
+  }
 })
 
 export const TermModel = model("Term", TermSchema);

@@ -25,7 +25,7 @@ const configparams: Config = {
 
 if (process.env.NODE_ENV === "production") {
   console.log("Loading production configs");
-  configparams.db.host = process.env.DBHOST;
+  configparams.db.host = process.env.DBHOST || "mongodb://localhost:27017/";
 } 
 else if (process.env.NODE_ENV === "test") {
   console.log("Loading test configs");

@@ -19,7 +19,7 @@ paths:
             schema:
               type: object
               properties:
-                username:
+                userId:
                   type: string
                 password:
                   type: string
@@ -173,7 +173,7 @@ paths:
             schema:
               type: object
               properties:
-                username:
+                userId:
                   type: string
                 isAdmin:
                   type: boolean
@@ -455,8 +455,6 @@ components:
       properties:
         id:
           type: string
-        username:
-          type: string
         email:
           type: string
         isAdmin:
@@ -490,7 +488,7 @@ components:
           description: URL of the photo location
       required:
         - email
-        - username
+        - userId
     Event:
       type: object
       properties: 

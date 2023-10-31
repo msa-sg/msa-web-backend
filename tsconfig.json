@@ -5,7 +5,8 @@
     "baseUrl": "src",
     "outDir": "dist",
     "rootDir": "src",
-    "sourceMap": true
+    "sourceMap": true,
+    "strict": true
   },
   "include": ["src/**/*"],
   "ts-node": {
