@@ -4,8 +4,19 @@
     "moduleResolution": "NodeNext",
     "baseUrl": "src",
     "outDir": "dist",
+    "rootDir": "src",
     "sourceMap": true,
-    "noImplicitAny": false
+    // "strict": true,
+    "typeRoots": ["src/types/global.d.ts", "./node_modules/@types"],
+    "useUnknownInCatchVariables": false
   },
-  "include": ["src/**/*"]
+  "include": ["src/**/*"],
+  "ts-node": {
+    "require": ["tsconfig-paths/register"],
+    "files": true
+  },
+  "files": [
+    "src/index.ts",
+    "src/types/global.d.ts"
+  ]
 }

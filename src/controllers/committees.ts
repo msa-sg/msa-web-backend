@@ -1,5 +1,5 @@
 import express from "express";
-import * as Committees from "../db/committee";
+import * as Committees from "db/committee";
 
 export const getCommittees = async (
     req: express.Request,
@@ -39,7 +39,7 @@ export const createCommittee = async (
         const result = await Committees.createCommittee({
             name, desc
         });
-        return res.status(200).json(result);
+        return res.status(201).json(result);
     }
     catch (e) {
         return res.status(400).json(e.message);

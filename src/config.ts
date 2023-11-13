@@ -7,10 +7,12 @@ interface Config {
   };
   server: {
     hostname: string;
-    port: string;
+    port: number;
   };
-  access_token_secret: string
+  access_token_secret: string;
+  session_duration: number;
 }
+
 
 const configparams: Config = {
     db: {
@@ -18,14 +20,16 @@ const configparams: Config = {
     },
     server: {
         hostname: process.env.DOMAIN || "localhost",
-        port: process.env.PORT || "8080"
+        port: Number(process.env.PORT) || 8080
     },
     access_token_secret: process.env.ACCESS_TOKEN_SECRET || "SECRET",
+    session_duration: Number(process.env.SESSION_DURATION) || 3600000
 }
+
 
 if (process.env.NODE_ENV === "production") {
   console.log("Loading production configs");
-  configparams.db.host = process.env.DBHOST;
+  configparams.db.host = process.env.DBHOST || "mongodb://localhost:27017/";
 } 
 else if (process.env.NODE_ENV === "test") {
   console.log("Loading test configs");

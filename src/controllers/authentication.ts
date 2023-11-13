@@ -1,82 +1,130 @@
 import express from "express";
+import { verifyUser, createUser, findUserByEmail } from "services/users";
 
-import { getUserByEmail, createUser } from "../db/users";
-import { authentication, random } from "../helpers";
+interface errorResult {
+  code: number;
+  message: string;
+  error?: [{
+    field: string;
+    desc: string;
+  }];
+};
 
 export const login = async (req: express.Request, res: express.Response) => {
   try {
-    const { email, password } = req.body;
+    const { email, password }: { email: string, password: string } = req.body;
 
     if (!email || !password) {
-      return res.sendStatus(400);
+      var errorObj: errorResult = {
+        code: 1000,
+        message: "Insufficient values"
+      };
+      if(!email){
+        errorObj.error?.push({
+          field: "email", desc: "Missing"
+        })
+      }
+      if(!password){
+        errorObj.error?.push({
+          field: "password", desc: "Missing"
+        })
+      }
+      return res.status(400).json(errorObj);
     }
 
-    const user = await getUserByEmail(email).select(
-      "+authentication.salt +authentication.password"
-    );
-
-    if (!user || !user.authentication) {
-      return res.sendStatus(400);
+    const user = await findUserByEmail(email, { password: 1 }, true, { lean: false });
+    const isUser: boolean = await verifyUser(user, email, password)
+    if (!isUser) {
+      return res.sendStatus(404);
     }
 
-    const expectedHash = authentication(
-      user.authentication.salt || "",
-      password
-    );
-
-    if (user.authentication.password != expectedHash) {
-      return res.sendStatus(403);
-    }
-
-    const salt = random();
-    user.authentication.sessionToken = authentication(
-      salt,
-      user._id.toString()
-    );
-
-    await user.save();
-
-    res.cookie("MSA-AUTH", user.authentication.sessionToken, {
-      domain: "localhost",
-      path: "/",
-    });
-
-    return res.status(200).json(user).end();
+    // generate session and send it as a cookie
+    req.session.regenerate(function (err: Error) {
+      if (err) {
+        console.log("Regeneration failed:", err.message);
+        return res.sendStatus(500);
+      }
+      else {
+        req.session.user = user;
+        req.session.save(function (err: Error) {
+          if (err) {
+            console.log(err.message)
+            return res.sendStatus(500);
+          }
+          else {
+            const result = {
+              message: "Login ok",
+              data: {
+                user
+              }
+            }
+            return res.status(200).json(result).end();
+          }
+        })
+      }
+    })
   } catch (error) {
     console.log(error);
-    return res.sendStatus(400);
+    return res.sendStatus(500);
   }
 };
 
 export const register = async (req: express.Request, res: express.Response) => {
   try {
-    const { email, password, username, isAdmin } = req.body;
+    const { email, password, username, isAdmin }: { email: string, password: string, username: string, isAdmin?: boolean }
+      = req.body;
 
     if (!email || !password || !username) {
-      return res.sendStatus(400);
+      var errorObj: errorResult = {
+        code: 1000,
+        message: "Insufficient values"
+      };
+      if(!email){
+        errorObj.error?.push({
+          field: "email", desc: "Missing"
+        })
+      }
+      if(!password){
+        errorObj.error?.push({
+          field: "password", desc: "Missing"
+        })
+      }
+      if(!username){
+        errorObj.error?.push({
+          field: "username", desc: "Missing"
+        })
+      }
+      return res.status(400).json(errorObj);
     }
     console.log("registering ...");
 
-    const existingUser = await getUserByEmail(email);
+    const existingUser = await findUserByEmail(email);
 
     if (existingUser) {
-      return res.sendStatus(400);
+      var errorObj: errorResult = {
+        code: 1001,
+        message: "Intend to duplicate object",
+        error: [{
+          field: "email",
+          desc: "Already taken"
+        }]
+      }
+      return res.status(400).json(errorObj);
     }
 
-    const salt = random();
-    const user = await createUser({
-      email,
-      username,
-      isAdmin,
-      authentication: {
-        salt,
-        password: authentication(salt, password),
-      },
-    });
+    const user = await createUser({ email: email, username: username, password: password, isAdmin: isAdmin || false })
+    const result = {
+      "message": "User created",
+      "data": {
+        "id": user._id,
+        "username": user.username,
+        "email": user.email
+      }
+    };
 
-    return res.status(200).json(user).end();
+    return res.status(201).json(result).end();
   } catch (error) {
     console.log(error);
-    return res.sendStatus(400);
+    return res.sendStatus(500);
   }
 };

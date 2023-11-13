@@ -1,14 +1,24 @@
 import mongoose from "mongoose";
+import bcrypt from "bcrypt";
 
-// Term Config
-const TermSchema = new mongoose.Schema({
-  position: {
-    type: mongoose.SchemaTypes.ObjectId,
-    ref: 'Committee'
-  },
+
+/* Position subdocument */
+export interface PositionInput {
+  name: string;
+  term: number;
+  comPhotoLoc: string;
+  termId: string;
+}
+
+export interface PositionDocument extends PositionInput, mongoose.Document {
+  _id: string;
+}
+
+// This subdocument shows the position held that year. 
+// The actual records of all terms and positions is in the Position schema
+const PositionSchema = new mongoose.Schema({
+  name: { type: String, required: true },
   term: { type: Number },
-  startDt: { type: Date },
-  endDt: { type: Date },
   comPhotoLoc: {
     type: String,
     validate: {
@@ -16,18 +26,50 @@ const TermSchema = new mongoose.Schema({
         return urlString.startsWith("http");
       }
     }
-  }
+  },
+  termId: {
+    type: mongoose.SchemaTypes.ObjectId,
+    ref: 'Position'
+  },
 })
 
-// User Config
-const UserSchema = new mongoose.Schema({
-  email: { type: String, required: true },
-  username: { type: String, required: true },
+
+/* User */
+interface Session {
+  token: string;
+  expiry: Date;
+}
+
+export interface UserInput {
+  email: string;
+  username: string;
+  password: string;
+  isAdmin?: boolean;
+  sessions?: mongoose.Types.Array<Session>;
+  course?: string;
+  gender?: string;
+  firstName?: string;
+  lastName?: string;
+  uniEntryYear?: Date;
+  origin?: string;
+  committee?: PositionInput;
+}
+
+export interface UserDocument extends UserInput, mongoose.Document {
+  _id: string;
+  creationDt: Date;
+  comparePassword(textPwCandidate: string): Promise<boolean>;
+}
+
+// User Schema
+const userSchema = new mongoose.Schema({
+  email: { type: String, required: true, unique: true },
+  username: {type: String, required: true, unique: true},
   isAdmin: { type: Boolean, required: true, default: false },
-  authentication: {
-    password: { type: String, required: true, select: false },
-    salt: { type: String, select: false },
-    sessionToken: { type: String, select: false },
+  password: { type: String, required: true, select: false },
+  sessions: {
+    token: { type: String, select: false },
+    expiry: { type: Date, select: false }
   },
   creationDt: { type: Date, default: Date.now, required: true },
   role: { type: String, default: "User", required: true }, // to be updated later on
@@ -38,20 +80,27 @@ const UserSchema = new mongoose.Schema({
   uniEntryYear: { type: Date, required: false },
   origin: { type: String, required: false },
   profilePhotoLoc: { type: String, required: false },
-  committee: [TermSchema]
+  committee: PositionSchema
 });
 
-export const UserModel = mongoose.model("User", UserSchema);
+userSchema.index({ email: 1 });
 
-// User Actions
-export const getUsers = () => UserModel.find();
-export const getUserByEmail = (email: string) => UserModel.findOne({ email });
-export const getUserBySessionToken = (sessionToken: string) =>
-  UserModel.findOne({ "authentication.sessionToken": sessionToken });
-export const getUserById = (id: string) => UserModel.findById(id);
-export const createUser = (values: Record<string, any>) =>
-  new UserModel(values).save().then((user) => user.toObject());
-export const deleteUserById = (id: string) =>
-  UserModel.findOneAndDelete({ _id: id });
-export const updateUserById = (id: string, values: Record<string, any>) =>
-  UserModel.findByIdAndUpdate(id, values);
+userSchema.pre("save",
+  async function (this: UserDocument, next: (err?: Error) => void) {
+    if (!this.isModified("password")) return next();
+
+    // new password for this user. So generate salt upon saving
+    const salt = await bcrypt.genSalt(12);
+    const hash = await bcrypt.hashSync(this.password, salt);
+    this.password = hash;
+    return next();
+  }
+);
+
+userSchema.methods.comparePassword = async function (textPwCandidate: string): Promise<boolean> {
+  const user = this as UserDocument;
+  return bcrypt.compare(textPwCandidate, user.password).catch(e => false);
+}
+
+
+export default mongoose.model<UserDocument>("User", userSchema);

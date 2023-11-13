@@ -1,5 +1,5 @@
 import crypto from "crypto";
-import config from '../config'
+import config from 'config'
 
 const SECRET = config.access_token_secret;
 

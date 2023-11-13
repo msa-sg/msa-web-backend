@@ -1,5 +1,5 @@
 import express from "express";
-import * as Users from "../db/users";
+import * as Users from "db/users";
 import { toInteger } from "lodash";
 
 export const getPostings = async (
@@ -50,7 +50,7 @@ export const createPosting = async (
         await user.save();
         const result = {"id": userid}
 
-        return res.status(200).json(result);
+        return res.status(201).json(result);
     }
     catch (e) {
         return res.status(400).json(e.message);

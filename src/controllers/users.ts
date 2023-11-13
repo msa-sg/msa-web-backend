@@ -1,13 +1,13 @@
 import express from "express";
+import { deleteUser, findUser, findUserById } from "services/users";
 
-import { deleteUserById, getUsers, getUserById } from "../db/users";
 
-export const getAllUsers = async (
+export const userGetAll = async (
   req: express.Request,
   res: express.Response
 ) => {
   try {
-    const users = await getUsers();
+    const users = await findUser({});
 
     return res.status(200).json(users);
   } catch (error) {
@@ -16,14 +16,14 @@ export const getAllUsers = async (
   }
 };
 
-export const deleteUser = async (
+export const userDelete = async (
   req: express.Request,
   res: express.Response
 ) => {
   try {
     const { id } = req.params;
 
-    const deletedUser = await deleteUserById(id);
+    const deletedUser = await deleteUser(id);
 
     return res.json(deletedUser);
   } catch (error) {
@@ -32,7 +32,7 @@ export const deleteUser = async (
   }
 };
 
-export const updateUser = async (
+export const userUpdate = async (
   req: express.Request,
   res: express.Response
 ) => {
@@ -44,7 +44,7 @@ export const updateUser = async (
       return res.sendStatus(400);
     }
 
-    const user = await getUserById(id);
+    const user = await findUserById(id);
 
     if (!user) return res.status(400);
 
