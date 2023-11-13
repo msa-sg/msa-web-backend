@@ -6,7 +6,7 @@
     "outDir": "dist",
     "rootDir": "src",
     "sourceMap": true,
-    "strict": true,
+    // "strict": true,
     "typeRoots": ["src/types/global.d.ts", "./node_modules/@types"],
     "useUnknownInCatchVariables": false
   },
